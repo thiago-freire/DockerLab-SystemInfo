@@ -10,7 +10,7 @@ class SystemInformation:
     def __init__(self):
         
         self.__system = {
-            "Processor": self.__getPS(),
+            "Node": self.__getPS(),
             "CPU": self.__getCPUInfo(),
             "Memory": self.__getMemoryInfo(),
             "Disck": self.__getDisckInfo(),
