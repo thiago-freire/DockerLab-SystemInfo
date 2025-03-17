@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install -no-cach-dir -r requirements.txt
+RUN pip install --no-cach-dir -r requirements.txt
 
 EXPOSE 5001
 
