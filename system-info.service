@@ -1,0 +1,12 @@
+[Unit]
+Description=Hello Flask Application
+After=network.target
+
+[Service]
+User=viplab
+WorkingDirectory=/home/viplab/DockerLab-SystemInfo/run.py
+ExecStart=/home/viplab/DockerLab-SystemInfo/.env/bin/python3 /home/viplab/DockerLab-SystemInfo/run.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
