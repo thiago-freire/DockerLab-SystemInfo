@@ -1,5 +1,5 @@
 [Unit]
-Description=Hello Flask Application
+Description=DockerLab System Information
 After=network.target
 
 [Service]
