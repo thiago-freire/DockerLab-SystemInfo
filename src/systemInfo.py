@@ -10,10 +10,10 @@ class SystemInformation:
     def __init__(self):
         
         self.__system = {
-            "Node": self.__getPS(),
+            "Nome": self.__getPS(),
             "CPU": self.__getCPUInfo(),
             "Memory": self.__getMemoryInfo(),
-            "Disck": self.__getDisckInfo(),
+            "Disck": self.__getDiskInfo(),
             "Network": self.__getNetworkInfo(),
             "GPU": self.__getGPUInfo()
         }
@@ -35,19 +35,19 @@ class SystemInformation:
 
         uname = platform.uname()
 
-        boot_time_timestamp = psutil.boot_time()
-        bt = datetime.fromtimestamp(boot_time_timestamp)
-        boot = f"{bt.year}/{bt.month}/{bt.day} {bt.hour}:{bt.minute}:{bt.second}"
+        # boot_time_timestamp = psutil.boot_time()
+        # bt = datetime.fromtimestamp(boot_time_timestamp)
+        # boot = f"{bt.year}/{bt.month}/{bt.day} {bt.hour}:{bt.minute}:{bt.second}"
 
-        processor = {"System": uname.system,
-                     "NodeName": uname.node,
-                     "Release": uname.release,
-                     "Version": uname.version,
-                     "Machine": uname.machine,
-                     "Processor": uname.processor,
-                     "Boot": boot}
+        # processor = {"System": uname.system,
+        #              "NodeName": uname.node,
+        #              "Release": uname.release,
+        #              "Version": uname.version,
+        #              "Machine": uname.machine,
+        #              "Processor": uname.processor,
+        #              "Boot": boot}
 
-        return processor
+        return uname.node
     
     def __getCPUInfo(self):
 
@@ -58,7 +58,6 @@ class SystemInformation:
                "freq_max": cpufreq.max,
                "freq_min": cpufreq.min,
                "frequencia": cpufreq.current,
-               "list_uso": psutil.cpu_percent(percpu=True, interval=1),
                "uso_total": psutil.cpu_percent()
             }
         
@@ -81,7 +80,7 @@ class SystemInformation:
 
         return memoria
     
-    def __getDisckInfo(self):
+    def __getDiskInfo(self):
 
         particoes = []
 
@@ -89,26 +88,25 @@ class SystemInformation:
 
         for partition in partitions:
 
+            if partition.device.startswith("/dev/loop") or partition.mountpoint.startswith("/boot"):
+                continue
+
             try:
                 partition_usage = psutil.disk_usage(partition.mountpoint)
             except PermissionError:
+
                 particoes.append({"device": partition.device,
                                    "mountpoint": partition.mountpoint,
                                    "file_system": partition.fstype
                                 })
                 continue
-            
-            disk_io = psutil.disk_io_counters()
 
             particoes.append({"device": partition.device,
                               "mountpoint": partition.mountpoint,
-                              "file_system": partition.fstype,
                               "total_size": self.__get_size(partition_usage.total),
                               "used": self.__get_size(partition_usage.used),
                               "free": self.__get_size(partition_usage.free),
                               "percentage": partition_usage.percent,
-                              "total_read": self.__get_size(disk_io.read_bytes),
-                              "total_write": self.__get_size(disk_io.write_bytes)
                             })
         
         return particoes
@@ -116,23 +114,18 @@ class SystemInformation:
     def __getNetworkInfo(self):
 
         if_addrs = psutil.net_if_addrs()
-        net_io = psutil.net_io_counters()
         
-        devices = []
-
         for interface_name, interface_addresses in if_addrs.items():
             for address in interface_addresses:
 
-                if str(address.family) == '2' or \
-                    str(address.family) == 'AddressFamily.AF_INET':
-                    devices.append({"network" :{ "device": interface_name,
-                                            "IP": address.address,
-                                            "mascara": address.netmask,
-                                            "broadcast": address.broadcast}})
-                    
-        network = {"total_sent": self.__get_size(net_io.bytes_sent),
-                   "total_received": self.__get_size(net_io.bytes_recv),
-                   "networs": devices}
+                if (str(address.family) == '2' or \
+                    str(address.family) == 'AddressFamily.AF_INET') and \
+                    address.address.startswith("192.168"):
+
+                    network = { "device": interface_name,
+                                "ip": address.address,
+                                "mascara": address.netmask,
+                                "broadcast": address.broadcast}
         
         return network
 
@@ -157,15 +150,14 @@ class SystemInformation:
             gpu_total_memory = f"{gpu.memoryTotal} MB"
             # get GPU temperature in Celsius
             gpu_temperature = gpu.temperature
-            gpu_uuid = gpu.uuid
+
             list_gpus.append({"id": gpu_id, 
                               "nome": gpu_name,
                               "load": gpu_load,
                               "free": gpu_free_memory, 
                               "used": gpu_used_memory,
                               "total": gpu_total_memory,
-                              "temperature": gpu_temperature,
-                              "uuid": gpu_uuid
+                              "temperature": gpu_temperature
                             })
 
         return list_gpus
