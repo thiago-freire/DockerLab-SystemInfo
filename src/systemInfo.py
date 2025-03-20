@@ -123,15 +123,12 @@ class SystemInformation:
         for interface_name, interface_addresses in if_addrs.items():
             for address in interface_addresses:
 
-                if str(address.family) == '2':
-                    item = {interface_name:{"IP": address.address,
+                if str(address.family) == '2' or \
+                    str(address.family) == 'AddressFamily.AF_INET':
+                    devices.append({"network" :{ "device": interface_name,
+                                            "IP": address.address,
                                             "mascara": address.netmask,
-                                            "broadcast": address.broadcast}}
-                    devices.append(item)
-                elif str(address.family) == '-1' or str(address.family) == '17':
-                    devices.append({interface_name:{"MAC": address.address,
-                                                    "mac_mascara": address.netmask,
-                                                    "mac_broadcast": address.broadcast}})
+                                            "broadcast": address.broadcast}})
                     
         network = {"total_sent": self.__get_size(net_io.bytes_sent),
                    "total_received": self.__get_size(net_io.bytes_recv),
