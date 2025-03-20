@@ -13,7 +13,7 @@ class SystemInformation:
             "Nome": self.__getPS(),
             "CPU": self.__getCPUInfo(),
             "Memory": self.__getMemoryInfo(),
-            "Disck": self.__getDiskInfo(),
+            "HardDisk": self.__getDiskInfo(),
             "Network": self.__getNetworkInfo(),
             "GPU": self.__getGPUInfo()
         }
