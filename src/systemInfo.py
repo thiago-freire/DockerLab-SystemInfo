@@ -66,16 +66,16 @@ class SystemInformation:
     def __getMemoryInfo(self):
 
         svmem = psutil.virtual_memory()
-        swap = psutil.swap_memory()
+        # swap = psutil.swap_memory()
 
         memoria = {"Total": self.__get_size(svmem.total),
                    "Available": self.__get_size(svmem.available),
                    "Used": self.__get_size(svmem.used),
-                   "Percentage": svmem.percent,
-                   "SWAP_Total": self.__get_size(swap.total),
-                   "SWAP_Free": self.__get_size(swap.free),
-                   "SWAP_Used": self.__get_size(swap.used),
-                   "SWAP_Percentage": swap.percent,
+                   "Percentage": svmem.percent#,
+                #    "SWAP_Total": self.__get_size(swap.total),
+                #    "SWAP_Free": self.__get_size(swap.free),
+                #    "SWAP_Used": self.__get_size(swap.used),
+                #    "SWAP_Percentage": swap.percent,
                 }
 
         return memoria
