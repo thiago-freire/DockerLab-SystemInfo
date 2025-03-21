@@ -28,7 +28,7 @@ class SystemInformation:
         factor = 1024
         for unit in ["", "K", "M", "G", "T", "P"]:
             if bytes < factor:
-                return f"{bytes:.2f}{unit}{suffix}"
+                return f"{bytes:.2f} {unit}{suffix}"
             bytes /= factor
 
     def __getPS(self):
